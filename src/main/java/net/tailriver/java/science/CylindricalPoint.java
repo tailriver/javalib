@@ -4,8 +4,8 @@ package net.tailriver.java.science;
 public class CylindricalPoint extends PolarPoint {
 	double z;
 
-	public CylindricalPoint(double r, double t, double z, boolean isRadian) {
-		super(r, t, isRadian);
+	public CylindricalPoint(double r, double t, double z, AngleType type) {
+		super(r, t, type);
 		this.z = z;
 	}
 

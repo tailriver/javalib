@@ -85,10 +85,9 @@ public class IsoparametricInterpolator {
 		double b3 = ( - x[0].y() - x[1].y() + x[2].y() + x[3].y() ) / 4;
 		double b4 = ( + x[0].y() + x[1].y() + x[2].y() + x[3].y() ) / 4 - p.y();
 
+		// solve:
+		//		sa * xi^2 + sb * xi + sc = 0
 		if (a1 != 0) {
-			// solve:
-			//		sa * xi^2 + sb * xi + sc = 0
-
 			double sa = a1 * b2 - a2 * b1;
 			double sb = a1 * b4 - a4 * b1 + a3 * b2 - a2 * b3;
 			double sc = a3 * b4 - a4 * b3;
@@ -96,10 +95,9 @@ public class IsoparametricInterpolator {
 			xi  = solveQuadraticFormula(sa, sb, sc);
 		}
 
+		// solve:
+		//		sa * eta^2 + sb * eta + sc = 0
 		if (b1 != 0) {
-			// solve:
-			//		sa * eta^2 + sb * eta + sc = 0
-
 			double sa = a1 * b3 - a3 * b1;
 			double sb = a1 * b4 - a4 * b1 + a2 * b3 - a3 * b2;
 			double sc = a2 * b4 - a4 * b2;
@@ -107,12 +105,11 @@ public class IsoparametricInterpolator {
 			eta = solveQuadraticFormula(sa, sb, sc);
 		}
 
-		if (!Double.isNaN(xi) && Double.isNaN(eta)) {
+		if (!Double.isNaN(xi) && Double.isNaN(eta))
 			eta = - (a2 * xi + a4) / (a1 * xi + a3);
-		}
-		if (Double.isNaN(xi) && !Double.isNaN(eta)) {
+
+		if (Double.isNaN(xi) && !Double.isNaN(eta))
 			xi = - (b3 * eta + b4) / (b1 * eta + b2);
-		}
 
 		if (!Double.isNaN(xi) && !Double.isNaN(eta))
 			return;
@@ -121,19 +118,16 @@ public class IsoparametricInterpolator {
 		// now solves:
 		//		a2 * xi + a3 * eta + a4 = 0
 		//		b2 * xi + b3 * eta + b4 = 0
-
 		double determinant = a2 * b3 - a3 * b2;
-		if (determinant == 0)
-			throw new RuntimeException("singular?");
-
-		xi  = a3 * b4 - a4 * b3 / determinant;
-		eta = a4 * b2 - a2 * b4 / determinant;
+		if (determinant != 0) {
+			xi  = a3 * b4 - a4 * b3 / determinant;
+			eta = a4 * b2 - a2 * b4 / determinant;
+		}
 	}
 
 	private double solveQuadraticFormula(double a, double b, double c) {
 		// solve:
 		//		a * x^2 + b * x + c = 0
-
 		if (a != 0) {
 			double sqrtDiscriminant = Math.sqrt( b * b - 4 * a * c );
 			double root1 = (-b + sqrtDiscriminant) / (2 * a);
@@ -144,19 +138,19 @@ public class IsoparametricInterpolator {
 				return root1;
 			if (isInDefinitionArea(root2))
 				return root2;
-
-			return Double.NaN;
 		}
 
 		// in fact, this is linear
 		// solve:
 		//		b * x + c = 0
+		if (b != 0)
+			return -c / b;
 
-		return -c / b;
+		return Double.NaN;
 	}
 
 	private static boolean isInDefinitionArea(double v) {
-		return Math.abs(v) <= 1 + epsilon;
+		return Math.abs(v) < 1 + epsilon;
 	}
 
 	public static void main(String... args) {
@@ -168,10 +162,11 @@ public class IsoparametricInterpolator {
 		IsoparametricInterpolator iso = new IsoparametricInterpolator(pi, pj, pk, pl);
 		iso.setNodeValue(1, 2, 3.5, 5.5);
 
-		for (int xdiv = 0; xdiv <= 50; xdiv++) {
-			double px = 6 * (xdiv / 50.0) - 3;
-			for (int ydiv = 0; ydiv <= 50; ydiv++) {
-				double py = 6 * (ydiv / 50.0) - 3;
+		final int RESOLUTION = 50;
+		for (int xdiv = 0; xdiv <= RESOLUTION; xdiv++) {
+			double px = (double)(xdiv / RESOLUTION) * 6 - 3;
+			for (int ydiv = 0; ydiv <= RESOLUTION; ydiv++) {
+				double py = (double)(ydiv / RESOLUTION) * 6 - 3;
 				Point p = new Point(px, py);
 				double v = iso.getUnknownValue(p);
 				System.out.println(px + "\t" + py + "\t" + (iso.isInElement() ? v : "?"));

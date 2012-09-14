@@ -2,34 +2,43 @@ package net.tailriver.java.science;
 
 public class PolarPoint implements Cloneable {
 	double r, t;
-	boolean isRadian;
+	AngleType angleType;
 
-	public PolarPoint(double r, double t, boolean isRadian) {
+	public PolarPoint(double r, double t, AngleType type) {
 		this.r = r;
 		this.t = t;
-		this.isRadian = isRadian;
+		this.angleType = type;
 	}
 
 	public PolarPoint(PolarPoint p) {
-		this(p.r, p.t, p.isRadian);
+		this(p.r, p.t, p.angleType);
 	}
 
 	public double r() {
 		return r;
 	}
 
+	public double t(AngleType type) {
+		return type.equals(AngleType.RADIAN) ? tRadian() : tDegree();
+	}
+
 	public double tRadian() {
-		return isRadian ? t : Math.toRadians(t);
+		return angleType.equals(AngleType.RADIAN) ? t : Math.toRadians(t);
 	}
 
 	public double tDegree() {
-		return isRadian ? Math.toDegrees(t) : t;
+		return angleType.equals(AngleType.DEGREE) ? t : Math.toDegrees(t);
 	}
 
+	@Deprecated
 	public void rotate(double angle, boolean isRadian) {
-		if (this.isRadian != isRadian) {
-			t = isRadian ? tRadian() : tDegree();
-			this.isRadian = isRadian;
+		rotate(angle, isRadian ? AngleType.RADIAN : AngleType.DEGREE);
+	}
+
+	public void rotate(double angle, AngleType type) {
+		if (!this.angleType.equals(type)) {
+			t = t(type);
+			this.angleType = type;
 		}
 		t += angle;
 	}
