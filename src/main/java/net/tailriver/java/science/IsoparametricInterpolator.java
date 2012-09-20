@@ -66,6 +66,15 @@ public class IsoparametricInterpolator {
 		return isInDefinitionArea(xi) && isInDefinitionArea(eta);
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < x.length; i++)
+			sb.append(x[i]).append(";v=").append(nodeValues != null ? nodeValues[i] : "?").append(", ");
+		sb.append("xi=").append(xi).append(",eta=").append(eta);
+		return sb.toString();
+	}
+
 	private void clearXiEta() {
 		xi  = Double.NaN;
 		eta = Double.NaN;

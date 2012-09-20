@@ -1,6 +1,7 @@
 package net.tailriver.java;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 /** ArrayList w/ one field. */
 public class FieldArrayList<E, F> extends ArrayList<E> implements Cloneable {
@@ -9,6 +10,10 @@ public class FieldArrayList<E, F> extends ArrayList<E> implements Cloneable {
 
 	public FieldArrayList() {
 		super();
+	}
+
+	public FieldArrayList(Collection<? extends E> c) {
+		super(c);
 	}
 
 	/**
@@ -31,15 +36,15 @@ public class FieldArrayList<E, F> extends ArrayList<E> implements Cloneable {
 	@Override
 	public void clear() {
 		super.clear();
-		field = null;
+		set(null);
 	}
 
 	@Override
-	public Object clone() {
+	public FieldArrayList<E, F> clone() {
 		@SuppressWarnings("unchecked")
-		FieldArrayList<E, F> v = (FieldArrayList<E, F>) super.clone();
-		v.field = field;
-		return v;
+		FieldArrayList<E, F> c = (FieldArrayList<E, F>) super.clone();
+		c.set(field);
+		return c;
 	}
 
 	@Override

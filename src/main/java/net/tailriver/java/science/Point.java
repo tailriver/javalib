@@ -2,41 +2,61 @@ package net.tailriver.java.science;
 
 
 public class Point implements Cloneable {
-	double x, y;
+	double x;
+	double y;
 
 	public Point(double x, double y) {
-		this.x = x;
-		this.y = y;
+		x(x);
+		y(y);
 	}
 
-	public Point(Point p) {
-		this(p.x, p.y);
-	}
-
-	public double x() {
+	public final double x() {
 		return x;
 	}
 
-	public double y() {
+	public final void x(double x) {
+		this.x = x;
+	}
+
+	public final double y() {
 		return y;
 	}
 
-	public void move(double dx, double dy) {
-		x += dx;
-		y += dy;
+	public final void y(double y) {
+		this.y = y;
 	}
 
-	public double getDistance(Point p) {
+	public final Point move(double dx, double dy) {
+		x(x + dx);
+		y(y + dy);
+		return this;
+	}
+
+	public Point scale(double scale) {
+		return scale(scale, scale);
+	}
+
+	public final Point scale(double xscale, double yscale) {
+		x(x * xscale);
+		y(y * yscale);
+		return this;
+	}
+
+	public final double getDistance(Point p) {
 		return getDistance(this, p);
 	}
 
-	public PolarPoint toPolar() {
+	public final PolarPoint toPolar() {
 		return toPolar(this);
 	}
 
 	@Override
-	protected Point clone() {
-		return new Point(this);
+	public Point clone() {
+		try {
+			return (Point) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new AssertionError();
+		}
 	}
 
 	@Override
@@ -55,16 +75,18 @@ public class Point implements Cloneable {
 
 	@Override
 	public String toString() {
-		return (new StringBuilder()).append(x).append("\t").append(y).toString();
+		StringBuilder sb = new StringBuilder(getClass().getSimpleName());
+		sb.append("x=").append(x).append(",y=").append(y);
+		return sb.toString();
 	}
 
-	public static double getDistance(Point p1, Point p2) {
+	public static final double getDistance(Point p1, Point p2) {
 		double dx = p1.x - p2.x;
 		double dy = p1.y - p2.y;
 		return Math.sqrt(dx * dx + dy * dy);
 	}
 
-	public static PolarPoint toPolar(Point p) {
+	public static final PolarPoint toPolar(Point p) {
 		double r = Math.sqrt(p.x * p.x + p.y * p.y);
 		double t = Math.atan2(p.y, p.x);
 		return new PolarPoint(r, t, AngleType.RADIAN);

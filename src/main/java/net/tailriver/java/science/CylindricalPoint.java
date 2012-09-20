@@ -6,32 +6,73 @@ public class CylindricalPoint extends PolarPoint {
 
 	public CylindricalPoint(double r, double t, double z, AngleType type) {
 		super(r, t, type);
-		this.z = z;
+		z(z);
 	}
 
 	public CylindricalPoint(PolarPoint p, double z) {
-		super(p);
-		this.z = z;
+		this(p.r, p.t, z, p.angleType);
 	}
 
-	public CylindricalPoint(CylindricalPoint p) {
-		this(p, p.z);
-	}
-
-	public double z() {
+	public final double z() {
 		return z;
 	}
 
-	public Point3D toPoint3D() {
-		return toPoint3D(this);
+	public final void z(double z) {
+		this.z = z;
 	}
 
-	public static Point3D toPoint3D(CylindricalPoint p) {
-		return new Point3D(p.toPoint(), p.z);
+	public final CylindricalPoint move(double dr, double dz) {
+		move(dr);
+		z(z + dz);
+		return this;
+	}
+
+	@Override
+	public CylindricalPoint rotate(double dt, AngleType type) {
+		super.rotate(dt, type);
+		return this;
+	}
+
+	@Override
+	public CylindricalPoint scale(double scale) {
+		return scale(scale, scale);
+	}
+
+	public final CylindricalPoint scale(double rscale, double zscale) {
+		super.scale(rscale);
+		z(z * zscale);
+		return this;
+	}
+
+	public final Point3D toPoint3D() {
+		return toPoint3D(this);
 	}
 
 	@Override
 	public CylindricalPoint clone() {
-		return new CylindricalPoint(super.clone(), z);
+		return (CylindricalPoint) super.clone();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (super.equals(obj) && obj instanceof CylindricalPoint)
+			return Double.compare(z, ((CylindricalPoint)obj).z) == 0;
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode() + 7 * Double.valueOf(z).hashCode();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder(super.toString());
+		sb.append(",z=").append(z);
+		return sb.toString();
+	}
+
+	public final static Point3D toPoint3D(CylindricalPoint p) {
+		return new Point3D(p.toPoint(), p.z);
 	}
 }

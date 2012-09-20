@@ -3,16 +3,15 @@ package net.tailriver.java;
 import java.util.List;
 
 public class Util {
-	public static <T> String join(CharSequence sep, T[] array) {
+	public static String join(String sep, Object[] array) {
 		StringBuilder sb = new StringBuilder();
-		for (T s : array)
+		for (Object s : array)
 			sb.append(s).append(sep);
 		return sb.substring(0, sb.length() - sep.length());
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <T> String join(CharSequence sep, List<T> list) {
-		return Util.<T>join(sep, (T[]) list.toArray() );
+	public static <E> String join(String sep, List<E> list) {
+		return Util.join(sep, list.toArray());
 	}
 
 	public static String repeat(String s, int times) {
